@@ -1,1 +1,1 @@
-# rag_with_kg
+# Building a rag pipeline using knowledge graph
