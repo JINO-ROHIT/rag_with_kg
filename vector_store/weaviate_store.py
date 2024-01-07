@@ -42,7 +42,7 @@ class Weaviate_Store:
     
     def keyword_search(self, query: str , top_k: int = 5):
       response = (
-                  self.client.query.get(self.store_name, ["source", "target", "relation"])
+                  self.client.query.get(self.store_name, ["source", "target", "relation", "chunk"])
                   .with_bm25(query = query)
                   .with_limit(top_k)
                   .do()

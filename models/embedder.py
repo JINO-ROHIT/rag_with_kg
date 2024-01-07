@@ -8,7 +8,7 @@ class Embedder:
         self.dimension = self.model.embeddings.position_embeddings.embedding_dim
         self.max_seq_length = self.model.embeddings.position_embeddings.num_embeddings
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print("Device:", self.devicedevice)
+        print("Device:", self.device)
 
     def embed(self, texts, max_seq_length = 500):
         self.model.to(self.device)

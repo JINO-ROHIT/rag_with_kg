@@ -6,16 +6,32 @@ class Knowledge_graph:
         self.df = df
     
     def create_graph(self):
-        self.G = nx.from_pandas_edgelist(self.df, 'node_1', 'node_2', edge_attr='edge', create_using=nx.Multiself.G())
+        self.G = nx.from_pandas_edgelist(self.df, 'node_1', 'node_2', edge_attr='edge', create_using=nx.MultiGraph())
         nx.draw(self.G, with_labels=True)
     
     def query_sub_graph(self, query_node):
         neighbors = list(self.G.neighbors(query_node)) + [query_node]
         subgraph = self.G.subgraph(neighbors)
 
-        # Plot the subself.G
         pos = nx.spring_layout(subgraph)
-        nx.draw(subgraph, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700)
-        plt.title(f"Subself.G of Node {query_node} and its Neighbors")
-        #plt.show()
+
+        plt.figure(figsize=(8, 8))
+
+        node_size = 2000
+        node_color = 'lightblue'
+        font_color = 'black'
+        font_weight = 'bold'
+        font_size = 8
+        edge_color = 'gray'
+        edge_style = 'dashed'
+
+        # Draw the subgraph
+        nx.draw(subgraph, pos, with_labels=True, node_size=node_size, node_color=node_color, font_color=font_color, font_size = font_size,
+                font_weight=font_weight, edge_color=edge_color, style=edge_style)
+
+        # Add additional customizations
+        plt.title(f"Graph of Node: {query_node}")
+
+        # Save the plot to a file
         plt.savefig('subgraph.png')
+        #plt.show()

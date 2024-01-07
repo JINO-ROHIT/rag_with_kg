@@ -24,17 +24,22 @@ if __name__ == '__main__':
 
     kg = Knowledge_graph(entities_df)
     kg.create_graph()
-    #kg.query_sub_graph('jino')
 
+    #if you want to do hybrid search, create embeddings
     emb_model = Embedder()
     nodes_embeds = emb_model.embed(list(entities_df['node_1'] + ' ' + entities_df['node_2'] + ' ' + entities_df['edge']))
-    query_embed = emb_model.embed(['who is jino?'])
 
-    entities_df['vectors'] = list(nodes_embeds.values())
+    entities_df['vectors'] = nodes_embeds.tolist()
 
-    vector_store = Weaviate_Store(store_name = 'trial')
+    vector_store = Weaviate_Store(store_name = 'Demo')
     vector_store.store_vectors(entities_df)
 
-    response = vector_store.keyword_search(query = "who is jino", top_k = 5)
+    query = "what was the solution for the hackathon"
+    response = vector_store.keyword_search(query = query, top_k = 5)
+
+    for _r in response['data']['Get']['Demo']:
+        kg.query_sub_graph(_r['source'])
+    
+    rag_llm.generate_answers(chunks, query, 500)
 
     

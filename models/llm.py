@@ -57,6 +57,12 @@ and the relation between them, like the following: \n
 DO NOT RETURN ANY EXPLANATION, ONLY RETURN THE LIST OF JSON.
 """
 
+qna_prompt = """You are a helpful assistant. You do not respond as 'User' or pretend to be 'User'.
+You only respond once as Assistant. You are allowed to use only the given context below to answer the user's queries, 
+and if the answer is not present in the context, say you don't know the answer.
+CONTEXT: {context}
+"""
+
 class RAG_LLM:
     def __init__(self, model_directory: str, temperature: float, top_k: float, top_p: float, top_a: float, token_repetition_penalty: float):
 
@@ -130,6 +136,32 @@ class RAG_LLM:
         df = pd.DataFrame(all_matches)
         df = df.drop_duplicates(subset=['node_1', 'node_2', 'edge'], keep=False)
         return df
+    
+    def generate_answers(self, chunks, query, max_new_tokens) -> str:
+        if self.generator is None or self.settings is None:
+            raise RuntimeError("Model not initialized. Call setup_model() first.")
+        
+        self.generator.warmup()
+
+        prompt = """<|im_start|>system
+        {qna_prompt}
+        <|im_end|>
+        <|im_start|>user
+        {query}
+        <|im_end|>
+        <|im_start|>assistant
+        """
+        logger.info(f"Asking the assistant : {query}")
+        output = self.generator.generate_simple(prompt.format(qna_prompt = qna_prompt.format(context = chunks), query = query), self.settings, max_new_tokens, seed = 1234)
+
+        start_tag = "<|im_start|>"
+        end_tag = "<|im_end|>"
+        start_index = output.rfind(start_tag)
+        end_index = output.rfind(end_tag)
+        logger.info(f"Answer : {output[start_index + len(start_tag): end_index]}")
+
+        
+
 
 
 # if __name__ == '__main__':
