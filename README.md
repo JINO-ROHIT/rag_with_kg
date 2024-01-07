@@ -24,7 +24,6 @@ pip install -r requirements.txt
 - Uses the Exllamav2 implementation of the mistral orca model which is extremely fast and memory efficient.
 - Construction of knowledge graph from text to understand the concepts better and retrieve more relevant text chunks.
 - The vector database used is Weaviate for storing the data and applying the keyword search(can also be done for hybrid search).
-- 
 
 ## Usage
 
